@@ -6,15 +6,21 @@ const gameboard = (function(){
     for (let i=0; i<rows; i++){
         board[i] = [];
         for (j=0; j<columns; j++){
-            board[i].push (Cell());
+            board[i].push (Cell(i,j));
         }
     }
     const getBoard = () => board;
     const playerMove = (row, column, player) => {
-        //Logic to check if clicked square is empty
+        if (board[i][j] !== undefined) {
+            board[i][j] = player.token;
+        }
     }
     const printBoard = () => {
-        
+        console.log (board);
     }
 
 })();
+
+const Cell(i, j) {
+    let value = 0;
+}
