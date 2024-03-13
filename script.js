@@ -72,9 +72,20 @@ const GameController = (function(playerOne = "Player 1", playerTwo = "Player 2")
             [[0, 0], [1, 1], [2, 2]], // Diagonals
             [[0, 2], [1, 1], [2, 0]]
         ];
-        for (const token of [players[0].token, players[1].token]) {
+        for (const player of [players[0], players[1]]) {
             for (const combo of winningCombos) {
-                
+                let win = true;
+                for (const pair of combo) {
+                    let [row, col] = pair;
+                    if (game.getBoard()[row][col] !== player.token) {
+                        win = false;
+                        break;
+                    }
+                }
+                if (win) {
+                    console.log (`${player.token} wins the game!`)
+                    //reset board
+                }
             }
         }
     }
