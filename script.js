@@ -1,4 +1,4 @@
-const Gameboard = (function(){
+const gameboard = (function(){
     const rows = 3;
     const columns = 3;
     const board = [];
@@ -6,13 +6,15 @@ const Gameboard = (function(){
     for (let i=0; i<rows; i++){
         board[i] = [];
         for (j=0; j<columns; j++){
-            board[i].push(Cell());
+            board[i].push('*');
         }
     }
     const getBoard = () => board;
     const playerMove = (i, j, activePlayerToken) => {
-        if (board[i][j] !== undefined) {
-            board[i][j].cellContent(activePlayerToken) ;
+        console.log(activePlayerToken);
+        if (board[i][j] == '*') {
+            board[i][j] = activePlayerToken ;
+            console.log(board[i][j]);
         }
     }
     const printBoard = () => {
@@ -21,17 +23,7 @@ const Gameboard = (function(){
     return {getBoard, playerMove, printBoard}
 })();
 
-function Cell() {
-    let value = 0;
-    const getValue = () => value;
-    const cellContent = (activePlayerToken) => {
-        value = activePlayerToken;
-    }
-    return {getValue, cellContent}
-}
-
-const GameController = (function(playerOne = "Player 1", playerTwo = "Player 2") {
-    const board = Gameboard();
+const gameController = (function(playerOne = "Player 1", playerTwo = "Player 2") {
     const players = [
         {
             name: playerOne,
@@ -51,13 +43,14 @@ const GameController = (function(playerOne = "Player 1", playerTwo = "Player 2")
     }
     const playRound = (row, column) => {
         console.log (`${getActivePlayer().name} is making their move`)
-        board.playerMove(row, column, getActivePlayer().token);
+        gameboard.playerMove(row, column, getActivePlayer().token);
+        winChecker(); // Temporary placement
         switchPlayer();
         printNewBoard();
     }
 
     const printNewBoard = () => {
-        board.printBoard();
+        gameboard.printBoard();
         console.log (`It is now ${getActivePlayer}'s turn`);
     }
 
@@ -77,7 +70,7 @@ const GameController = (function(playerOne = "Player 1", playerTwo = "Player 2")
                 let win = true;
                 for (const pair of combo) {
                     let [row, col] = pair;
-                    if (game.getBoard()[row][col] !== player.token) {
+                    if (gameboard.getBoard()[row][col] !== player.token) {
                         win = false;
                         break;
                     }
@@ -93,6 +86,6 @@ const GameController = (function(playerOne = "Player 1", playerTwo = "Player 2")
     return {playRound, getActivePlayer}
 })();
 
-const ScreenController = (function(){
-    const game = GameController();
-})();
+// const ScreenController = (function(){
+//     const game = gameController();
+// })();
