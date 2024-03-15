@@ -1,0 +1,8 @@
+.board {
+    display: grid;
+    grid-template: repeat(3, 100px) / repeat(3, 100px);
+}
+
+.cell {
+    
+}
