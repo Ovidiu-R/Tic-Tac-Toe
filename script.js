@@ -12,7 +12,7 @@ const gameboard = (function(){
 
     const getBoard = () => board;
     const playerMove = (i, j, activePlayerToken) => {
-        if (board[i][j].getValue() == '*') {
+        if (board[i][j].getValue() == '') {
             board[i][j].addToken(activePlayerToken) ;
         }
     }
@@ -22,7 +22,7 @@ const gameboard = (function(){
     const resetBoard = () => {
         for (let i=0; i<rows; i++){
             for (j=0; j<columns; j++){
-                board[i][j].addToken('*');
+                board[i][j].addToken('');
             }   
         }    
     }
@@ -30,7 +30,7 @@ const gameboard = (function(){
 })();
 
 function Cell(){
-    let value = '*';
+    let value = '';
     const addToken = (activePlayerToken) => {
         value = activePlayerToken;
     }
@@ -91,8 +91,9 @@ const gameController = (function(playerOne = "Player 1", playerTwo = "Player 2")
                     }
                 }
                 if (win) {
-                    console.log (`${player.token} wins the game!`)
-                    gameboard.resetBoard();
+                    console.log (`${player.name} wins the game!`)
+                    ScreenController.declareWinner(player.name);
+                    // gameboard.resetBoard();
                 }
             }
         }
@@ -102,15 +103,16 @@ const gameController = (function(playerOne = "Player 1", playerTwo = "Player 2")
 })();
 
 const ScreenController = (function(){
-    const turn = document.querySelector('.turn');
     const board = document.querySelector('.board');
+    const winner = document.querySelector('.winner');
+    const replay = document.querySelector('.replay');
 
     const updateScreen = () => {
         board.textContent = "";
         for (let i=0; i<3; i++){
             for (j=0; j<3; j++){
                 const cellButton = document.createElement('button');
-                cellButton.classList.add('.cell');
+                cellButton.classList.add('cell');
                 cellButton.dataset.row = i;
                 cellButton.dataset.column = j;
                 cellButton.textContent = gameboard.getBoard()[i][j].getValue();
@@ -120,13 +122,23 @@ const ScreenController = (function(){
     }
     function clickHandler(e) {
         console.log ('test');
-        if (e.target.classList.contains('.cell')){
+        if (e.target.classList.contains('cell')){
             gameController.playRound(e.target.dataset.row, e.target.dataset.column);
             updateScreen();
         }
 
     }
+    function declareWinner(player){
+        winner.textContent = `${player} wins the game!`;
+        replay.style.display = 'block';
+    }
+
     updateScreen();
     board.addEventListener('click', clickHandler);
+    replay.addEventListener('click', () => {
+        gameboard.resetBoard();
+        updateScreen();
+    });
+    return {declareWinner};
     
 })();
