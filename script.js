@@ -49,6 +49,9 @@ const gameController = (function(playerOne = "Player 1", playerTwo = "Player 2")
             token: 'O'
         }
     ]
+    const setPlayerNames = (index, newName) => {
+        players[index].name = newName;
+    }
 
     let activePlayer = players[0];
     const getActivePlayer = () => activePlayer;
@@ -99,13 +102,15 @@ const gameController = (function(playerOne = "Player 1", playerTwo = "Player 2")
         }
     }
 
-    return {playRound, getActivePlayer}
+    return {playRound, getActivePlayer, setPlayerNames}
 })();
 
 const ScreenController = (function(){
     const board = document.querySelector('.board');
     const winner = document.querySelector('.winner');
     const replay = document.querySelector('.replay');
+    const playerNames = document.querySelectorAll('input');
+
 
     const updateScreen = () => {
         board.textContent = "";
@@ -132,7 +137,15 @@ const ScreenController = (function(){
         winner.textContent = `${player} wins the game!`;
         replay.style.display = 'block';
     }
-
+    function updateNames(){
+        playerNames.forEach ((player, index) => {
+            player.addEventListener('blur', (e) => {
+                let newName = e.target.value;
+                gameController.setPlayerNames(index, newName)
+            });
+        });
+    }
+    updateNames();
     updateScreen();
     board.addEventListener('click', clickHandler);
     replay.addEventListener('click', () => {
