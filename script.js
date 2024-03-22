@@ -62,9 +62,11 @@ const gameController = (function(playerOne = "Player 1", playerTwo = "Player 2")
     const playRound = (row, column) => {
         // console.log (`${getActivePlayer().name} is making their move`)
         gameboard.playerMove(row, column, getActivePlayer().token);
-        winChecker(); // Temporary placement
-        switchPlayer();
-
+        if (winChecker() == true) {
+            return;
+        } else {
+            switchPlayer();
+        }
         ScreenController.whoseTurn();
     }
 
@@ -91,12 +93,13 @@ const gameController = (function(playerOne = "Player 1", playerTwo = "Player 2")
                 }
                 if (win) {
                     ScreenController.declareWinner(player.name);
+                    return true;
                 }
             }
         }
     }
 
-    return {playRound, getActivePlayer, setPlayerNames}
+    return {playRound, getActivePlayer, setPlayerNames, switchPlayer}
 })();
 
 const ScreenController = (function(){
@@ -121,7 +124,7 @@ const ScreenController = (function(){
      
     }
     function clickHandler(e) {
-        if (e.target.classList.contains('cell')){
+        if (e.target.classList.contains('cell') && winner.textContent == ''){
             gameController.playRound(e.target.dataset.row, e.target.dataset.column);
             updateScreen();
         }
@@ -131,6 +134,7 @@ const ScreenController = (function(){
         winner.textContent = `${player} wins the game!`;
         replay.style.display = 'block';
     }
+   
     function updateNames(){
         playerNames.forEach ((player, index) => {
             player.addEventListener('blur', (e) => {
@@ -158,6 +162,10 @@ const ScreenController = (function(){
         updateScreen();
         winner.textContent = '';
         replay.style.display = 'none';
+        if (gameController.getActivePlayer().token == 'O') {
+            gameController.switchPlayer();
+            whoseTurn();
+        }
     });
     return {declareWinner, whoseTurn};
     
