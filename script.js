@@ -16,9 +16,9 @@ const gameboard = (function(){
             board[i][j].addToken(activePlayerToken) ;
         }
     }
-    const printBoard = () => {
-        console.log (board);
-    }
+    // const printBoard = () => {
+    //     console.log (board);
+    // }
     const resetBoard = () => {
         for (let i=0; i<rows; i++){
             for (j=0; j<columns; j++){
@@ -26,7 +26,7 @@ const gameboard = (function(){
             }   
         }    
     }
-    return {getBoard, playerMove, printBoard, resetBoard}
+    return {getBoard, playerMove, resetBoard}
 })();
 
 function Cell(){
@@ -60,16 +60,12 @@ const gameController = (function(playerOne = "Player 1", playerTwo = "Player 2")
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
     }
     const playRound = (row, column) => {
-        console.log (`${getActivePlayer().name} is making their move`)
+        // console.log (`${getActivePlayer().name} is making their move`)
         gameboard.playerMove(row, column, getActivePlayer().token);
         winChecker(); // Temporary placement
         switchPlayer();
-        printNewBoard();
-    }
 
-    const printNewBoard = () => {
-        gameboard.printBoard();
-        console.log (`It is now ${getActivePlayer}'s turn`);
+        ScreenController.whoseTurn();
     }
 
     const winChecker = () => {
@@ -94,9 +90,7 @@ const gameController = (function(playerOne = "Player 1", playerTwo = "Player 2")
                     }
                 }
                 if (win) {
-                    console.log (`${player.name} wins the game!`)
                     ScreenController.declareWinner(player.name);
-                    // gameboard.resetBoard();
                 }
             }
         }
@@ -124,9 +118,9 @@ const ScreenController = (function(){
                 board.appendChild(cellButton);
             }   
         }    
+     
     }
     function clickHandler(e) {
-        console.log ('test');
         if (e.target.classList.contains('cell')){
             gameController.playRound(e.target.dataset.row, e.target.dataset.column);
             updateScreen();
@@ -145,13 +139,26 @@ const ScreenController = (function(){
             });
         });
     }
-    updateNames();
-    updateScreen();
-    board.addEventListener('click', clickHandler);
+    function whoseTurn() {
+        if (gameController.getActivePlayer().token == 'X') {
+            playerNames[0].style.backgroundColor = 'pink'; 
+            playerNames[1].style.backgroundColor = 'white'; 
+        } else {
+            playerNames[0].style.backgroundColor = 'white'; 
+            playerNames[1].style.backgroundColor = 'pink'; 
+        }
+    }
+    whoseTurn(); /*Styles player name input background color based on turn*/
+    updateNames(); /*Listener updates player names every time input goes out of focus*/
+    updateScreen(); /*First render of gameboard*/
+    board.addEventListener('click', clickHandler); /*Main driver*/
+
     replay.addEventListener('click', () => {
         gameboard.resetBoard();
         updateScreen();
+        winner.textContent = '';
+        replay.style.display = 'none';
     });
-    return {declareWinner};
+    return {declareWinner, whoseTurn};
     
 })();
