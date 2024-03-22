@@ -108,13 +108,11 @@ const gameController = (function(playerOne = "Player 1", playerTwo = "Player 2")
                 if (win) {
                     ScreenController.declareWinner(player.name);
                     resetMoveCounter();
+                    ScreenController.drawLine(combo);
                     return true;
                 }
             }
         }
-    }
-    const tieChecker = () => {
-
     }
 
     return {playRound, getActivePlayer, setPlayerNames, switchPlayer, incrementMoveCounter}
@@ -125,6 +123,7 @@ const ScreenController = (function(){
     const winner = document.querySelector('.winner');
     const replay = document.querySelector('.replay');
     const playerNames = document.querySelectorAll('input');
+    const canvas = document.querySelector('canvas');
 
 
     const updateScreen = () => {
@@ -174,6 +173,26 @@ const ScreenController = (function(){
             playerNames[1].style.backgroundColor = 'pink'; 
         }
     }
+
+    const drawLine = (combo) => {
+        const cell = document.querySelectorAll('.cell');
+        const boardRect = board.getBoundingClientRect();
+        const boardLeft = boardRect.left;
+        const boardTop = boardRect.top;
+        const points = [];
+        
+        for (const pair of combo) {
+            let [row, col] = pair;
+            cell.forEach ((cell) => {
+                const cellWidth = cell.offsetWidth;
+                let coordX = boardLeft + cellWidth/2 + (cell.dataset.row * cellWidth);
+                let coordY = boardTop + cellWidth/2 + (cell.dataset.column * cellWidth);
+                points.push {coordX, coordY};
+            });
+        }
+        
+    }
+
     whoseTurn(); /*Styles player name input background color based on turn*/
     updateNames(); /*Listener updates player names every time input goes out of focus*/
     updateScreen(); /*First render of gameboard*/
@@ -189,6 +208,6 @@ const ScreenController = (function(){
             whoseTurn();
         }
     });
-    return {declareWinner, whoseTurn, declareTie};
+    return {declareWinner, whoseTurn, declareTie, drawLine};
     
 })();

@@ -49,7 +49,7 @@ input {
 }
 
 .cell {
-    font-size: 50px;
+    font-size: 60px;
     background-color: transparent;
     border: none;
     outline: 2px solid black;
@@ -84,4 +84,20 @@ input {
     to {
         transform: rotate(360deg);
     }
+}
+
+/* .container {
+    position: relative;
+    height: 420px;
+    width: 420px;
+} */
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    z-index: -1;
 }
