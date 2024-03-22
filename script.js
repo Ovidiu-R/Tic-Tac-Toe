@@ -13,12 +13,11 @@ const gameboard = (function(){
     const getBoard = () => board;
     const playerMove = (i, j, activePlayerToken) => {
         if (board[i][j].getValue() == '') {
-            board[i][j].addToken(activePlayerToken) ;
+            board[i][j].addToken(activePlayerToken);
+            gameController.incrementMoveCounter();
         }
     }
-    // const printBoard = () => {
-    //     console.log (board);
-    // }
+   
     const resetBoard = () => {
         for (let i=0; i<rows; i++){
             for (j=0; j<columns; j++){
@@ -49,6 +48,22 @@ const gameController = (function(playerOne = "Player 1", playerTwo = "Player 2")
             token: 'O'
         }
     ]
+    let moveCounter = 0;
+    const incrementMoveCounter = () => {
+
+        if (moveCounter < 8) {
+            moveCounter += 1;
+            console.log (moveCounter);
+
+        } else {
+            console.log (moveCounter);
+            ScreenController.declareTie();
+            resetMoveCounter();
+        }
+    }
+    const resetMoveCounter = () => {
+        moveCounter = 0;
+    }
     const setPlayerNames = (index, newName) => {
         players[index].name = newName;
     }
@@ -60,7 +75,6 @@ const gameController = (function(playerOne = "Player 1", playerTwo = "Player 2")
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
     }
     const playRound = (row, column) => {
-        // console.log (`${getActivePlayer().name} is making their move`)
         gameboard.playerMove(row, column, getActivePlayer().token);
         if (winChecker() == true) {
             return;
@@ -93,13 +107,17 @@ const gameController = (function(playerOne = "Player 1", playerTwo = "Player 2")
                 }
                 if (win) {
                     ScreenController.declareWinner(player.name);
+                    resetMoveCounter();
                     return true;
                 }
             }
         }
     }
+    const tieChecker = () => {
 
-    return {playRound, getActivePlayer, setPlayerNames, switchPlayer}
+    }
+
+    return {playRound, getActivePlayer, setPlayerNames, switchPlayer, incrementMoveCounter}
 })();
 
 const ScreenController = (function(){
@@ -134,7 +152,11 @@ const ScreenController = (function(){
         winner.textContent = `${player} wins the game!`;
         replay.style.display = 'block';
     }
-   
+   function declareTie() {
+        winner.textContent = "It's a tie! Try again!";
+        replay.style.display = 'block';
+   }
+
     function updateNames(){
         playerNames.forEach ((player, index) => {
             player.addEventListener('blur', (e) => {
@@ -167,6 +189,6 @@ const ScreenController = (function(){
             whoseTurn();
         }
     });
-    return {declareWinner, whoseTurn};
+    return {declareWinner, whoseTurn, declareTie};
     
 })();
