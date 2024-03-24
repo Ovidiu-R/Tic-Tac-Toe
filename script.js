@@ -124,7 +124,7 @@ const ScreenController = (function(){
     const replay = document.querySelector('.replay');
     const playerNames = document.querySelectorAll('input');
     const canvas = document.querySelector('canvas');
-    const context = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
 
 
     const updateScreen = () => {
@@ -174,6 +174,7 @@ const ScreenController = (function(){
             playerNames[1].style.backgroundColor = 'pink'; 
         }
     }
+/*Line drawing functionality currently not working*/
 
     const findLineCoordinates = (combo) => {
         const cells = document.querySelectorAll('.cell');
@@ -197,13 +198,16 @@ const ScreenController = (function(){
     }
 
     const drawLine = (points) => {
-        context.strokeStyle = 'black';
-        context.lineWidth = 3;
-        context.beginPath();
-        context.moveTo(points[0].coordX, points[0].coordY);
-        context.lineTo(points[2].coordX, points[2].coordY);
-        context.stroke();
-        console.log(context);
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(points[0].coordX, points[0].coordY);
+        ctx.lineTo(points[2].coordX, points[2].coordY);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.fill();
+        console.log(points[0].coordX, points[0].coordY);
+        console.log(ctx);
     }
 
     whoseTurn(); /*Styles player name input background color based on turn*/
