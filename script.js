@@ -1,3 +1,4 @@
+document.addEventListener('DOMContentLoaded', (event) => {
 const gameboard = (function(){
     const rows = 3;
     const columns = 3;
@@ -53,10 +54,8 @@ const gameController = (function(playerOne = "Player 1", playerTwo = "Player 2")
 
         if (moveCounter < 8) {
             moveCounter += 1;
-            console.log (moveCounter);
 
         } else {
-            console.log (moveCounter);
             ScreenController.declareTie();
             resetMoveCounter();
         }
@@ -108,7 +107,8 @@ const gameController = (function(playerOne = "Player 1", playerTwo = "Player 2")
                 if (win) {
                     ScreenController.declareWinner(player.name);
                     resetMoveCounter();
-                    ScreenController.drawLine(combo);
+                    ScreenController.findLineCoordinates(combo);
+                    console.log (combo);
                     return true;
                 }
             }
@@ -124,6 +124,7 @@ const ScreenController = (function(){
     const replay = document.querySelector('.replay');
     const playerNames = document.querySelectorAll('input');
     const canvas = document.querySelector('canvas');
+    const context = canvas.getContext('2d');
 
 
     const updateScreen = () => {
@@ -174,23 +175,35 @@ const ScreenController = (function(){
         }
     }
 
-    const drawLine = (combo) => {
-        const cell = document.querySelectorAll('.cell');
+    const findLineCoordinates = (combo) => {
+        const cells = document.querySelectorAll('.cell');
         const boardRect = board.getBoundingClientRect();
         const boardLeft = boardRect.left;
         const boardTop = boardRect.top;
-        const points = [];
+        let points = [];
+        const cellWidth = cells[0].offsetWidth;
         
         for (const pair of combo) {
             let [row, col] = pair;
-            cell.forEach ((cell) => {
-                const cellWidth = cell.offsetWidth;
-                let coordX = boardLeft + cellWidth/2 + (cell.dataset.row * cellWidth);
-                let coordY = boardTop + cellWidth/2 + (cell.dataset.column * cellWidth);
-                points.push {coordX, coordY};
+            cells.forEach ((cell) => {
+                if (cell.dataset.row == row && cell.dataset.column == col) {
+                    let x = boardLeft + cellWidth/2 + (cell.dataset.column * cellWidth);
+                    let y = boardTop + cellWidth/2 + (cell.dataset.row * cellWidth);
+                    points.push ({coordX: x, coordY: y});
+                }
             });
         }
-        
+        drawLine(points);
+    }
+
+    const drawLine = (points) => {
+        context.strokeStyle = 'black';
+        context.lineWidth = 3;
+        context.beginPath();
+        context.moveTo(points[0].coordX, points[0].coordY);
+        context.lineTo(points[2].coordX, points[2].coordY);
+        context.stroke();
+        console.log(context);
     }
 
     whoseTurn(); /*Styles player name input background color based on turn*/
@@ -208,6 +221,7 @@ const ScreenController = (function(){
             whoseTurn();
         }
     });
-    return {declareWinner, whoseTurn, declareTie, drawLine};
+    return {declareWinner, whoseTurn, declareTie, findLineCoordinates};
     
 })();
+});
