@@ -175,14 +175,12 @@ const ScreenController = (function(){
             playerNames[1].style.backgroundColor = 'pink'; 
         }
     }
-/*Line drawing functionality currently not working*/
 
     const findLineCoordinates = (combo) => {
         const cells = document.querySelectorAll('.cell');
         const boardRect = board.getBoundingClientRect();
         const boardLeft = boardRect.left;
         const boardTop = boardRect.top;
-        // points = [];
         let points = [];
         const cellWidth = cells[0].offsetWidth;
         
@@ -214,9 +212,6 @@ const ScreenController = (function(){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    // const handleResize = () => {
-    //     drawLine(currentCoords);
-    // }
 
     whoseTurn(); /*Styles player name input background color based on turn*/
     updateNames(); /*Listener updates player names every time input goes out of focus*/
