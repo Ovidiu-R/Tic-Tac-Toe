@@ -125,6 +125,7 @@ const ScreenController = (function(){
     const playerNames = document.querySelectorAll('input');
     const canvas = document.querySelector('canvas');
     const ctx = canvas.getContext("2d");
+    var combination = [];
 
 
     const updateScreen = () => {
@@ -181,9 +182,11 @@ const ScreenController = (function(){
         const boardRect = board.getBoundingClientRect();
         const boardLeft = boardRect.left;
         const boardTop = boardRect.top;
+        // points = [];
         let points = [];
         const cellWidth = cells[0].offsetWidth;
         
+        eraseLine();
         for (const pair of combo) {
             let [row, col] = pair;
             cells.forEach ((cell) => {
@@ -194,6 +197,7 @@ const ScreenController = (function(){
                 }
             });
         }
+        combination = combo;
         drawLine(points);
     }
 
@@ -203,12 +207,16 @@ const ScreenController = (function(){
         ctx.beginPath();
         ctx.moveTo(points[0].coordX, points[0].coordY);
         ctx.lineTo(points[2].coordX, points[2].coordY);
-        ctx.closePath();
         ctx.stroke();
-        ctx.fill();
-        console.log(points[0].coordX, points[0].coordY);
-        console.log(ctx);
+        currentCoords = points;
     }
+    const eraseLine = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // const handleResize = () => {
+    //     drawLine(currentCoords);
+    // }
 
     whoseTurn(); /*Styles player name input background color based on turn*/
     updateNames(); /*Listener updates player names every time input goes out of focus*/
@@ -220,11 +228,19 @@ const ScreenController = (function(){
         updateScreen();
         winner.textContent = '';
         replay.style.display = 'none';
+        eraseLine();
         if (gameController.getActivePlayer().token == 'O') {
             gameController.switchPlayer();
             whoseTurn();
         }
     });
+
+    window.addEventListener('resize', () => {
+        findLineCoordinates(combination);
+    });
+    window.addEventListener('scroll', () => {
+        findLineCoordinates(combination);
+    })
     return {declareWinner, whoseTurn, declareTie, findLineCoordinates};
     
 })();
